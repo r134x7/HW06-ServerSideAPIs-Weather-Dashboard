@@ -9,7 +9,7 @@ function handleSearchFormSubmit(event) {
     event.preventDefault(); // to prevent the page from refreshing
   
     var cityInputVal = cityInputEl.value; // saves the city input value into a variable
-    console.log(cityInputVal)
+    // console.log(cityInputVal)
   
     if (!cityInputVal) { // checks if value is undefined
       console.error('Enter a city in the input field');
@@ -38,8 +38,8 @@ function handleSearchFormSubmit(event) {
             console.log("first api call above");
             var lat = data[0]["lat"]; // retrieves latitude
             var lon = data[0]["lon"]; // retrieves longitude
+            var name = data[0]["name"]; // retrieves name
         
-            // https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
 
             var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts" + "&appid=" + apiKey + "&units=metric";
 
@@ -50,7 +50,25 @@ function handleSearchFormSubmit(event) {
             .then(function (data) {
                 console.log(data);
                 console.log("second api call above");
-            })
+                console.log(name);
+                var array1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
+                     console.log(array1);
+                     for (var i = 0; i < array1.length; i++) { 
+                           if (array1[i] === array1[2]) {
+                               var listItem = document.createElement("img")
+                               listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
+                               console.log(array1[i])
+                               // container.appendChild(listItem);
+                           } else {
+                               var listItem = document.createElement("li");
+
+                               listItem.textContent = array1[i];
+                               console.log(array1[i])
+                            }
+
+                container.appendChild(listItem);
+                }
+            });
         });
     }
 
@@ -61,30 +79,30 @@ function handleSearchFormSubmit(event) {
     //     })
     //     .then(function (data) {
     //       console.log(data);
-    //       var array1 = [data.name, data.dt, data.weather[0]["icon"], data.main.temp, data.main.humidity, data.wind.speed];
-    //       console.log(array1);
-    //       var latitude = data.coord.lat;
-    //       console.log(latitude);
-    //       var longitude = data.coord.lon;
-    //       console.log(longitude);
-    //       for (var i = 0; i < array1.length; i++) { 
-    //             if (array1[i] === array1[2]) {
-    //                 var listItem = document.createElement("img")
-    //                 listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
-    //                 console.log(array1[i])
-    //                 // container.appendChild(listItem);
-    //             } else {
-    //                 var listItem = document.createElement("li");
+        //   var array1 = [data.name, data.dt, data.weather[0]["icon"], data.main.temp, data.main.humidity, data.wind.speed];
+        //   console.log(array1);
+        //   var latitude = data.coord.lat;
+        //   console.log(latitude);
+        //   var longitude = data.coord.lon;
+        //   console.log(longitude);
+        //   for (var i = 0; i < array1.length; i++) { 
+        //         if (array1[i] === array1[2]) {
+        //             var listItem = document.createElement("img")
+        //             listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
+        //             console.log(array1[i])
+        //             // container.appendChild(listItem);
+        //         } else {
+        //             var listItem = document.createElement("li");
             
-    //                 listItem.textContent = array1[i];
-    //                 console.log(array1[i])
-    //                 // if (array1[i] === array1[2]) {
-    //                     // var listItem = document.createElement("img")
-    //                     // listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[2] + "@2x.png")
-    //             }
-    //         // http://openweathermap.org/img/wn/ + array1[i] + @2x.png
+        //             listItem.textContent = array1[i];
+        //             console.log(array1[i])
+        //             // if (array1[i] === array1[2]) {
+        //                 // var listItem = document.createElement("img")
+        //                 // listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[2] + "@2x.png")
+        //         }
+        //     // http://openweathermap.org/img/wn/ + array1[i] + @2x.png
 
-    //         container.appendChild(listItem);
+        //     container.appendChild(listItem);
             
     //       }
     //       // possibly need for loop for weather of the next five days
