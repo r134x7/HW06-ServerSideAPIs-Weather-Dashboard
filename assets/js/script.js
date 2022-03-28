@@ -59,6 +59,47 @@ function handleSearchFormSubmit(event) {
                                listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
                                console.log(array1[i])
                                // container.appendChild(listItem);
+                           } else if (array1[i] === array1[1]) {
+                            var listItem = document.createElement("li");
+                            
+                            listItem.textContent = moment.unix(array1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
+                            console.log(array1[i])
+                               
+                           } else if (array1[i] === array1[3]) {
+                            var listItem = document.createElement("li");
+
+                            listItem.textContent = "Temp: " + array1[i] + "°C";
+                            console.log(array1[i])
+                           } else if (array1[i] === array1[4]) {
+                            var listItem = document.createElement("li");
+
+                            listItem.textContent = "Humidity: " + array1[i] + "%";
+                            console.log(array1[i])
+                           } else if (array1[i] === array1[5]) {
+                            var listItem = document.createElement("li");
+
+                            listItem.textContent = "Wind: " + array1[i] + "m/s";
+                            console.log(array1[i])
+                           } else if (array1[i] === array1[6]) {
+                            var listItem = document.createElement("li");
+                            var span = document.createElement("span");
+                            // uv index colour source: https://en.wikipedia.org/wiki/Ultraviolet_index
+                            listItem.textContent = "UV index: "
+                            listItem.append(span);
+                            span.textContent = " " + array1[i] + " ";
+                            var uvRange = Number(array1[6]);
+                            if (uvRange < 3) {
+                                span.setAttribute("style", "background-color: green; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                            } else if (uvRange >= 3 && uvRange < 6) {
+                                span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                            } else if (uvRange >= 6 && uvRange < 8) {
+                                span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                            } else if (uvRange >= 8 && uvRange < 11) {
+                                span.setAttribute("style", "background-color: red; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                            } else if (uvRange >= 11) {
+                                span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                            }
+                            console.log(array1[i])
                            } else {
                                var listItem = document.createElement("li");
 
