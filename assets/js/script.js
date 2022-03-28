@@ -3,7 +3,8 @@ var apiKey = "88237246776863c0ea0178b57d538861"; // saving api key under a varia
 var cityInputEl = document.querySelector('#city-input'); // selector for city input
 var searchFormEl = document.querySelector('#search-form'); // selector for form
 var searchAndHistory = document.querySelector(".search-and-history"); // selector for div container for seach input and history
-var container = document.querySelector(".container"); // selector for div container for the forecasts
+var container = document.querySelector(".container"); // selector for div container for the current weather
+var fiveDayForecast = document.querySelector(".fiveDayForecast"); // selector for div container for the five day forecast
 
 function handleSearchFormSubmit(event) {
     event.preventDefault(); // to prevent the page from refreshing
@@ -51,43 +52,43 @@ function handleSearchFormSubmit(event) {
                 console.log(data);
                 console.log("second api call above");
                 console.log(name);
-                var array1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
-                     console.log(array1);
-                     for (var i = 0; i < array1.length; i++) { 
-                           if (array1[i] === array1[2]) {
+                var currentDay1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
+                     console.log(currentDay1);
+                     for (var i = 0; i < currentDay1.length; i++) { 
+                           if (currentDay1[i] === currentDay1[2]) {
                                var listItem = document.createElement("img")
-                               listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
-                               console.log(array1[i])
+                               listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
+                               console.log(currentDay1[i])
                                // container.appendChild(listItem);
-                           } else if (array1[i] === array1[1]) {
+                           } else if (currentDay1[i] === currentDay1[1]) {
                             var listItem = document.createElement("li");
                             
-                            listItem.textContent = moment.unix(array1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
-                            console.log(array1[i])
+                            listItem.textContent = moment.unix(currentDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
+                            console.log(currentDay1[i])
                                
-                           } else if (array1[i] === array1[3]) {
+                           } else if (currentDay1[i] === currentDay1[3]) {
                             var listItem = document.createElement("li");
 
-                            listItem.textContent = "Temp: " + array1[i] + "°C";
-                            console.log(array1[i])
-                           } else if (array1[i] === array1[4]) {
+                            listItem.textContent = "Temp: " + currentDay1[i] + "°C";
+                            console.log(currentDay1[i])
+                           } else if (currentDay1[i] === currentDay1[4]) {
                             var listItem = document.createElement("li");
 
-                            listItem.textContent = "Humidity: " + array1[i] + "%";
-                            console.log(array1[i])
-                           } else if (array1[i] === array1[5]) {
+                            listItem.textContent = "Humidity: " + currentDay1[i] + "%";
+                            console.log(currentDay1[i])
+                           } else if (currentDay1[i] === currentDay1[5]) {
                             var listItem = document.createElement("li");
 
-                            listItem.textContent = "Wind: " + array1[i] + "m/s";
-                            console.log(array1[i])
-                           } else if (array1[i] === array1[6]) {
+                            listItem.textContent = "Wind: " + currentDay1[i] + "m/s";
+                            console.log(currentDay1[i])
+                           } else if (currentDay1[i] === currentDay1[6]) {
                             var listItem = document.createElement("li");
                             var span = document.createElement("span");
                             // uv index colour source: https://en.wikipedia.org/wiki/Ultraviolet_index
                             listItem.textContent = "UV index: "
                             listItem.append(span);
-                            span.textContent = " " + array1[i] + " ";
-                            var uvRange = Number(array1[6]);
+                            span.textContent = " " + currentDay1[i] + " ";
+                            var uvRange = Number(currentDay1[6]);
                             if (uvRange < 3) {
                                 span.setAttribute("style", "background-color: green; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
                             } else if (uvRange >= 3 && uvRange < 6) {
@@ -99,15 +100,51 @@ function handleSearchFormSubmit(event) {
                             } else if (uvRange >= 11) {
                                 span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
                             }
-                            console.log(array1[i])
+                            console.log(currentDay1[i])
                            } else {
                                var listItem = document.createElement("li");
 
-                               listItem.textContent = array1[i];
-                               console.log(array1[i])
+                               listItem.textContent = currentDay1[i];
+                               console.log(currentDay1[i])
                             }
 
-                container.appendChild(listItem);
+                          container.appendChild(listItem); // appends to current weather forecast
+                        } // for loop ends here
+                for (var j = 1; j < 6; j++) { // to loop through each day
+                    var forecastDay1 = [data.daily[j]["dt"], data.daily[j]["weather"][0]["icon"], data.daily[j]["temp"]["day"], data.daily[j]["humidity"], data.daily[j]["wind_speed"]]; // only need date, weather icon, temperature, humidity, wind speed.
+                    console.log(forecastDay1);
+                    for (var i = 0; i < forecastDay1.length; i++) { // nested for loop
+                        if (forecastDay1[i] === forecastDay1[1]) {
+                            var listItem = document.createElement("img")
+
+                            listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + forecastDay1[i] + "@2x.png")
+                            console.log(forecastDay1[i])
+
+                        } else if (forecastDay1[i] === forecastDay1[0]) {
+                         var listItem = document.createElement("li");
+                        
+                         listItem.textContent = moment.unix(forecastDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
+                         console.log(forecastDay1[i])
+
+                        } else if (forecastDay1[i] === forecastDay1[2]) {
+                         var listItem = document.createElement("li");
+
+                         listItem.textContent = "Temp: " + forecastDay1[i] + "°C";
+                         console.log(forecastDay1[i])
+                        } else if (forecastDay1[i] === forecastDay1[3]) {
+                         var listItem = document.createElement("li");
+
+                         listItem.textContent = "Humidity: " + forecastDay1[i] + "%";
+                         console.log(forecastDay1[i])
+                        } else if (forecastDay1[i] === forecastDay1[4]) {
+                         var listItem = document.createElement("li");
+
+                         listItem.textContent = "Wind: " + forecastDay1[i] + "m/s";
+                         console.log(forecastDay1[i])
+                        } 
+
+                       fiveDayForecast.appendChild(listItem); // appends to 
+                    }
                 }
             });
         });
