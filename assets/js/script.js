@@ -6,6 +6,9 @@ var searchAndHistory = document.querySelector(".search-and-history"); // selecto
 var container = document.querySelector(".container"); // selector for div container for the current weather
 var fiveDayForecast = document.querySelector(".fiveDayForecast"); // selector for div container for the five day forecast
 
+var capture = []; // empty array
+var take = JSON.parse(localStorage.getItem("history")); // to check
+
 function handleSearchFormSubmit(event) {
     event.preventDefault(); // to prevent the page from refreshing
   
@@ -17,12 +20,24 @@ function handleSearchFormSubmit(event) {
       return;
     }
 
-    generateHistory();
+    if (take === null) {
+        generateHistory();
+    } else if (!take.includes(cityInputVal)) {
+        generateHistory();
+    }
+
+    while (container.firstChild) { // to clear results when entering a new search source: https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
+        container.removeChild(container.firstChild);
+    }
+
+    while (fiveDayForecast.firstChild) {
+        fiveDayForecast.removeChild(fiveDayForecast.firstChild);
+    }
 
     var getCoordinates = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityInputVal + "&limit=1" + "&appid=" + apiKey; // to get the co-ordinates for making one call API
   
     // var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + cityInputVal + "&appid=" + apiKey + "&units=metric"; // makes an API call using the citInput and the API Key
-    var queryURL = "https://api.openweathermap.org/data/2.5/onecall?q=" + cityInputVal + "&appid=" + apiKey; // this will be needed for making a second call after getting the coodinates
+    // var queryURL = "https://api.openweathermap.org/data/2.5/onecall?q=" + cityInputVal + "&appid=" + apiKey; // this will be needed for making a second call after getting the coodinates
     
     // console.log(queryURL)
 
@@ -40,9 +55,10 @@ function handleSearchFormSubmit(event) {
             var lat = data[0]["lat"]; // retrieves latitude
             var lon = data[0]["lon"]; // retrieves longitude
             var name = data[0]["name"]; // retrieves name
+            console.log(name);
         
 
-            var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts" + "&appid=" + apiKey + "&units=metric";
+            var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts" + "&appid=" + apiKey + "&units=metric"; // to make one call API using co-ordinates retrieved earlier
 
             fetch(queryURL) // making a second api call
                 .then(function (response) {
@@ -194,113 +210,59 @@ function handleSearchFormSubmit(event) {
   function generateHistory() {
     var historyButton = document.createElement("button");
     historyButton.textContent = cityInputEl.value;
+    capture.push(cityInputEl.value);
 
+    localStorage.setItem("history", JSON.stringify(capture));
+    console.log(capture);
+
+    historyButton.addEventListener("click", handleSearchFormSubmit);
     searchAndHistory.appendChild(historyButton);
   }
+
+  function getHistory() {
+
+            capture = JSON.parse(localStorage.getItem("history")); // 
+         
+                for (var i = 0; i < capture.length; i++) {
+                  var historyButton = document.createElement("button");
+                  historyButton.setAttribute("data-search", i);
+                  historyButton.textContent = capture[i];
+                
+                  historyButton.addEventListener("click", function(event) {
+                   console.log(historyButton.textContent);
+                   cityInputEl.value = historyButton.textContent;
+                   console.log(cityInputEl.value);
+                   handleSearchFormSubmit(event);
+                  });
+                  searchAndHistory.appendChild(historyButton);    
+
+                }
+        // }
+    
+
+    //   if (!capture) {
+    //       capture = JSON.parse(localStorage.getItem("history"));
+          
+    //      for (var i = 0; i < capture.length; i++) {
+    //        var historyButton = document.createElement("button");
+    //        historyButton.setAttribute("data-search", i);
+    //        historyButton.textContent = capture[i];
+
+    //        historyButton.addEventListener("click", function(event) {
+    //         console.log(historyButton.textContent);
+    //         cityInputEl.value = historyButton.textContent;
+    //         console.log(cityInputEl.value);
+    //         handleSearchFormSubmit(event);
+    //        });
+    //        searchAndHistory.appendChild(historyButton);    
+    //      }
+    //   }
+
+  }
+
   
   searchFormEl.addEventListener('submit', handleSearchFormSubmit);
 
-// data needed... THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-// 
-// current, dt = data point refers to the requested time, not the current time
-//
-// current.dt gives Requested time, Unix, UTC (use this for date)
-// current.weather.icon should give the icon for the weather condition
-// current.temp gives Temperature. Units – default: kelvin, metric: Celsius, imperial: Fahrenheit. 
-// 
-// current.humidity gives Humidity, %
-// current.uvi gives current UV index
-// daily.uvi gives The maximum value of UV index for the day
-// current.wind_speed Wind speed. Wind speed. Units – default: metre/sec, metric: metre/sec, imperial: miles/hour.
-
-// fetch(queryURL)
-
-// from stu4
-// var repoList = document.querySelector('ul');
-// var fetchButton = document.getElementById('fetch-button');
-
-// function getApi() {
-//   // replace `octocat` with anyone else's GitHub username
-//   var requestUrl = 'https://api.github.com/users/octocat/repos';
-
-//   fetch(requestUrl)
-//     .then(function (response) {
-//       return response.json();
-//     })
-//     .then(function (data) {
-//       for (var i = 0; i < data.length; i++) {
-//         var listItem = document.createElement('li');
-//         listItem.textContent = data[i].html_url;
-//         repoList.appendChild(listItem);
-//       }
-//     });
-// }
-
-// fetchButton.addEventListener('click', getApi);
-
-
-// fetch(requestUrl)
-//   .then(function (response) {
-//     return response.json();
-//   })
-//   .then(function (data) {
-//     console.log('Github Repo Issues \n----------');
-//     console.log(data);
-//     // TODO: Loop through the response
-//     for (let i = 0; i < data.length; i++) {
-//       var element = data[i];
-//       console.log(element.user.login);
-//       console.log(element.user.url);
-//     }
-//     // TODO: Console log each issue's URL and each user's login
-//   });
-
-// var userContainer = document.getElementById('users');
-// var fetchButton = document.getElementById('fetch-button');
-
-// function getApi() {
-//   var requestUrl = 'https://api.github.com/users?per_page=5';
-
-//   fetch(requestUrl)
-//     .then(function (response) {
-//       return response.json();
-//     })
-//     .then(function (data) {
-//       // Use the console to examine the response
-//       console.log(data);
-//       // TODO: Loop through the data and generate your HTML
-//       for (i = 0; index < data.length; i++) {
-//         var user = data[i];
-//         var userName = document.createElement("h3");
-//         var userUrl = document.createElement("p");
-
-//         userName.textContent = user.login;
-//         userUrl.textContent = user.url;
-
-//         userContainer.appendChild(userName)
-//         userContainer.appendChild(userUrl)
-        
-//       }
-//     });
-// }
-// fetchButton.addEventListener('click', getApi);
-
-// function getApi(requestUrl) {
-//     fetch(requestUrl)
-//       .then(function (response) {
-//         // Check the console first to see the response.status
-//         console.log(response.status);
-//         // Then write the conditional based on that response.status value
-//         // if (response.status !== 200) {
-//         if (response.status >= 400) {
-//           responseText.textContent = response.status;
-//         }
-  
-//         // Make sure to display the response on the page
-//       })
-//       .then(function (data) {
-//         console.log(data);
-//       });
-//   }
-  
-//   getApi(badRequestUrl);
+  if (take !== null) {
+      getHistory();
+  }
