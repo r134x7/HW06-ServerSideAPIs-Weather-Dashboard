@@ -20,11 +20,9 @@ function handleSearchFormSubmit(event) {
       return;
     }
 
-    if (take === null) {
+    if (!capture.includes(cityInputEl)) { // checks string to avoid duplication, source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
         generateHistory();
-    } else if (!take.includes(cityInputVal)) {
-        generateHistory();
-    }
+      }
 
     while (container.firstChild) { // to clear results when entering a new search source: https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
         container.removeChild(container.firstChild);
@@ -35,15 +33,8 @@ function handleSearchFormSubmit(event) {
     }
 
     var getCoordinates = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityInputVal + "&limit=1" + "&appid=" + apiKey; // to get the co-ordinates for making one call API
-  
-    // var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + cityInputVal + "&appid=" + apiKey + "&units=metric"; // makes an API call using the citInput and the API Key
-    // var queryURL = "https://api.openweathermap.org/data/2.5/onecall?q=" + cityInputVal + "&appid=" + apiKey; // this will be needed for making a second call after getting the coodinates
-    
-    // console.log(queryURL)
 
     cityInputEl.textContent = ""; // clears text input
-  
-    // location.assign(queryURL);
 
     fetch(getCoordinates)
         .then(function (response) {
@@ -166,101 +157,39 @@ function handleSearchFormSubmit(event) {
         });
     }
 
-    // ran into dead end+++++++++++++++++++++++++++++++++++++++
-    // fetch(queryURL)
-    //     .then(function (response) {
-    //       return response.json();
-    //     })
-    //     .then(function (data) {
-    //       console.log(data);
-        //   var array1 = [data.name, data.dt, data.weather[0]["icon"], data.main.temp, data.main.humidity, data.wind.speed];
-        //   console.log(array1);
-        //   var latitude = data.coord.lat;
-        //   console.log(latitude);
-        //   var longitude = data.coord.lon;
-        //   console.log(longitude);
-        //   for (var i = 0; i < array1.length; i++) { 
-        //         if (array1[i] === array1[2]) {
-        //             var listItem = document.createElement("img")
-        //             listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[i] + "@2x.png")
-        //             console.log(array1[i])
-        //             // container.appendChild(listItem);
-        //         } else {
-        //             var listItem = document.createElement("li");
-            
-        //             listItem.textContent = array1[i];
-        //             console.log(array1[i])
-        //             // if (array1[i] === array1[2]) {
-        //                 // var listItem = document.createElement("img")
-        //                 // listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + array1[2] + "@2x.png")
-        //         }
-        //     // http://openweathermap.org/img/wn/ + array1[i] + @2x.png
-
-        //     container.appendChild(listItem);
-            
-    //       }
-    //       // possibly need for loop for weather of the next five days
-    //     //   for (var i = 0; i < data.length; i++) {
-    //         // var element = data[i];
-    //         // console.log(element.future.forecast);
-    //     //   }
-    //     });
-    // // }
-
   function generateHistory() {
     var historyButton = document.createElement("button");
     historyButton.textContent = cityInputEl.value;
-    capture.push(cityInputEl.value);
-
-    localStorage.setItem("history", JSON.stringify(capture));
-    console.log(capture);
-
-    historyButton.addEventListener("click", handleSearchFormSubmit);
+  
+    if (!capture.includes(cityInputEl.value)) {
+      capture.push(cityInputEl.value);
+      localStorage.setItem("history", JSON.stringify(capture));
+      historyButton.addEventListener("click", function (event) {
+        cityInputEl.value = event.target.innerHTML;
+        handleSearchFormSubmit(event);
+      });
+    } else {
+      return;
+    }
+  
     searchAndHistory.appendChild(historyButton);
   }
 
   function getHistory() {
-
-            capture = JSON.parse(localStorage.getItem("history")); // 
-         
-                for (var i = 0; i < capture.length; i++) {
-                  var historyButton = document.createElement("button");
-                  historyButton.setAttribute("data-search", i);
-                  historyButton.textContent = capture[i];
-                
-                  historyButton.addEventListener("click", function(event) {
-                   console.log(historyButton.textContent);
-                   cityInputEl.value = historyButton.textContent;
-                   console.log(cityInputEl.value);
-                   handleSearchFormSubmit(event);
-                  });
-                  searchAndHistory.appendChild(historyButton);    
-
-                }
-        // }
-    
-
-    //   if (!capture) {
-    //       capture = JSON.parse(localStorage.getItem("history"));
-          
-    //      for (var i = 0; i < capture.length; i++) {
-    //        var historyButton = document.createElement("button");
-    //        historyButton.setAttribute("data-search", i);
-    //        historyButton.textContent = capture[i];
-
-    //        historyButton.addEventListener("click", function(event) {
-    //         console.log(historyButton.textContent);
-    //         cityInputEl.value = historyButton.textContent;
-    //         console.log(cityInputEl.value);
-    //         handleSearchFormSubmit(event);
-    //        });
-    //        searchAndHistory.appendChild(historyButton);    
-    //      }
-    //   }
-
+    capture = JSON.parse(localStorage.getItem("history")); //
+    for (var i = 0; i < capture.length; i++) {
+      var historyButton = document.createElement("button");
+      historyButton.setAttribute("data-search", i);
+      historyButton.textContent = capture[i];
+  
+      historyButton.addEventListener("click", function (event) {
+        cityInputEl.value = event.target.innerHTML;
+        handleSearchFormSubmit(event);
+      });
+      searchAndHistory.appendChild(historyButton);
+    }
   }
 
-  
   searchFormEl.addEventListener('submit', handleSearchFormSubmit);
 
   if (take !== null) {
