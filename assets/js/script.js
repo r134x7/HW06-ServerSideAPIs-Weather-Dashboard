@@ -16,7 +16,10 @@ function handleSearchFormSubmit(event) {
     // console.log(cityInputVal)
   
     if (!cityInputVal) { // checks if value is undefined
-      console.error('Enter a city in the input field');
+     var error = document.createElement("h3")
+      error.setAttribute("class", "fs-2 badge text-danger bg-dark");
+      error.textContent = 'Enter a city name into the input field';
+      currentWeather.appendChild(error);
       return;
     }
 
@@ -62,7 +65,7 @@ function handleSearchFormSubmit(event) {
                 var currentDay1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
                      console.log(currentDay1);
                 var border = document.createElement("div")
-                border.setAttribute("class", "border border-dark")
+                border.setAttribute("class", "border border-dark bg-info")
                 currentWeather.appendChild(border)
                 var unorderedList = document.createElement("ul")
                 unorderedList.setAttribute("class", "list-inline")
@@ -70,7 +73,7 @@ function handleSearchFormSubmit(event) {
                      for (var i = 0; i < currentDay1.length; i++) { 
                            if (currentDay1[i] === currentDay1[2]) {
                                var listItem = document.createElement("li")
-                               listItem.setAttribute("class", "list-inline-item lead p-2")
+                               listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                var listItem = document.createElement("img")
                                listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
                             //    listItem.setAttribute("class", "list-inline-item")
@@ -78,28 +81,32 @@ function handleSearchFormSubmit(event) {
                                // currentWeather.appendChild(listItem);
                            } else if (currentDay1[i] === currentDay1[1]) {
                             var listItem = document.createElement("li");
-                            listItem.setAttribute("class", "list-inline-item lead p-2")
+                            listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                             listItem.textContent = moment.unix(currentDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
                             console.log(currentDay1[i])
                                
                            } else if (currentDay1[i] === currentDay1[3]) {
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
+                            listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Temp: " + currentDay1[i] + "°C";
                             console.log(currentDay1[i])
                            } else if (currentDay1[i] === currentDay1[4]) {
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
+                            listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Humidity: " + currentDay1[i] + "%";
                             console.log(currentDay1[i])
                            } else if (currentDay1[i] === currentDay1[5]) {
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
+                            listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Wind: " + currentDay1[i] + "m/s";
                             console.log(currentDay1[i])
                            } else if (currentDay1[i] === currentDay1[6]) {
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
+                            listItem.setAttribute("style", "list-style: none")
                             var span = document.createElement("span");
                             // uv index colour source: https://en.wikipedia.org/wiki/Ultraviolet_index
                             listItem.textContent = "UV index: "
@@ -107,20 +114,20 @@ function handleSearchFormSubmit(event) {
                             span.textContent = " " + currentDay1[i] + " ";
                             var uvRange = Number(currentDay1[6]);
                             if (uvRange < 3) {
-                                span.setAttribute("style", "background-color: green; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                                span.setAttribute("style", "background-color: green; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             } else if (uvRange >= 3 && uvRange < 6) {
-                                span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                                span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             } else if (uvRange >= 6 && uvRange < 8) {
-                                span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                                span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             } else if (uvRange >= 8 && uvRange < 11) {
-                                span.setAttribute("style", "background-color: red; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                                span.setAttribute("style", "background-color: red; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             } else if (uvRange >= 11) {
-                                span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 8px; color: white;")
+                                span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             }
                             console.log(currentDay1[i])
                            } else {
                                var listItem = document.createElement("li");
-                               listItem.setAttribute("class", "list-inline-item lead p-2")
+                               listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                listItem.textContent = currentDay1[i];
                                console.log(currentDay1[i])
                             }
@@ -132,12 +139,16 @@ function handleSearchFormSubmit(event) {
                     } // for loop ends here
                 
                 var header2 = document.createElement("h2")
+                header2.setAttribute("class", "fs-2 fw-bold p-2")
                 header2.textContent = "5-Day Forecast: "
                 fiveDayForecast.appendChild(header2);
 
                 for (var j = 1; j < 6; j++) { // to loop through each day
                     var forecastDay1 = [data.daily[j]["dt"], data.daily[j]["weather"][0]["icon"], data.daily[j]["temp"]["day"], data.daily[j]["humidity"], data.daily[j]["wind_speed"]]; // only need date, weather icon, temperature, humidity, wind speed.
                     console.log(forecastDay1);
+                    var border = document.createElement("div")
+                    border.setAttribute("class", "border border-light bg-dark")
+                    fiveDayForecast.appendChild(border)
                     for (var i = 0; i < forecastDay1.length; i++) { // nested for loop
                         if (forecastDay1[i] === forecastDay1[1]) {
                             var listItem = document.createElement("img")
@@ -147,28 +158,32 @@ function handleSearchFormSubmit(event) {
 
                         } else if (forecastDay1[i] === forecastDay1[0]) {
                          var listItem = document.createElement("li");
-                        
-                         listItem.textContent = moment.unix(forecastDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
+                         listItem.setAttribute("class", "fs-4 p-2 fw-bold text-light")
+                         listItem.setAttribute("style", "list-style: none")
+                         listItem.textContent = moment.unix(forecastDay1[i]).format("D/MMM/YYYY") // parsing unix timestamp using moment.js
                          console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[2]) {
                          var listItem = document.createElement("li");
-
+                         listItem.setAttribute("class", "fs-4 p-2 text-light")
+                         listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Temp: " + forecastDay1[i] + "°C";
                          console.log(forecastDay1[i])
                         } else if (forecastDay1[i] === forecastDay1[3]) {
                          var listItem = document.createElement("li");
-
+                         listItem.setAttribute("class", "fs-4 p-2 text-light")
+                         listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Humidity: " + forecastDay1[i] + "%";
                          console.log(forecastDay1[i])
                         } else if (forecastDay1[i] === forecastDay1[4]) {
                          var listItem = document.createElement("li");
-
+                         listItem.setAttribute("class", "fs-4 p-2 text-light")
+                         listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Wind: " + forecastDay1[i] + "m/s";
                          console.log(forecastDay1[i])
                         } 
 
-                       fiveDayForecast.appendChild(listItem); // for loop ends here
+                       border.appendChild(listItem); // for loop ends here
                     }
                 }
             });
@@ -177,7 +192,7 @@ function handleSearchFormSubmit(event) {
 
   function generateHistory() {
     var historyButton = document.createElement("button");
-    historyButton.setAttribute("class", "btn btn-secondary");
+    historyButton.setAttribute("class", "btn btn-secondary btn-lg px-5 mb-2");
     historyButton.textContent = cityInputEl.value;
   
     if (!capture.includes(cityInputEl.value)) {
@@ -198,7 +213,7 @@ function handleSearchFormSubmit(event) {
     capture = JSON.parse(localStorage.getItem("history")); //
     for (var i = 0; i < capture.length; i++) {
       var historyButton = document.createElement("button");
-      historyButton.setAttribute("class", "btn btn-secondary btn-lg")
+      historyButton.setAttribute("class", "btn btn-secondary btn-lg px-5 mb-2")
       historyButton.setAttribute("data-search", i);
       historyButton.textContent = capture[i];
   
