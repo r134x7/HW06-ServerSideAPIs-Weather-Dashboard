@@ -35,7 +35,7 @@ function handleSearchFormSubmit(event) {
         fiveDayForecast.removeChild(fiveDayForecast.firstChild);
     }
 
-    var getCoordinates = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityInputVal + "&limit=1" + "&appid=" + apiKey; // to get the co-ordinates for making one call API
+    var getCoordinates = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityInputVal + "&limit=1" + "&appid=" + apiKey; // to get the co-ordinates for making one call API
 
     cityInputEl.textContent = ""; // clears text input
 
@@ -75,7 +75,7 @@ function handleSearchFormSubmit(event) {
                                var listItem = document.createElement("li")
                                listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                var listItem = document.createElement("img")
-                               listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
+                               listItem.setAttribute("src", "https://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
                             //    listItem.setAttribute("class", "list-inline-item")
                                console.log(currentDay1[i])
                                // currentWeather.appendChild(listItem);
@@ -153,7 +153,7 @@ function handleSearchFormSubmit(event) {
                         if (forecastDay1[i] === forecastDay1[1]) {
                             var listItem = document.createElement("img")
 
-                            listItem.setAttribute("src", "http://openweathermap.org/img/wn/" + forecastDay1[i] + "@2x.png")
+                            listItem.setAttribute("src", "https://openweathermap.org/img/wn/" + forecastDay1[i] + "@2x.png")
                             console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[0]) {
