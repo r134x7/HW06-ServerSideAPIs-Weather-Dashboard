@@ -6,8 +6,8 @@ var searchAndHistory = document.querySelector(".search-and-history"); // selecto
 var currentWeather = document.querySelector(".currentWeather"); // selector for div container for the current weather
 var fiveDayForecast = document.querySelector(".fiveDayForecast"); // selector for div container for the five day forecast
 
-var capture = []; // empty array
-var take = JSON.parse(localStorage.getItem("history")); // to check
+var capture = []; // empty array to store city names
+var take = JSON.parse(localStorage.getItem("history")); // a status check to avoid bugs in line 237: getHistory()
 
 function handleSearchFormSubmit(event) {
     event.preventDefault(); // to prevent the page from refreshing
@@ -49,7 +49,7 @@ function handleSearchFormSubmit(event) {
             var lat = data[0]["lat"]; // retrieves latitude
             var lon = data[0]["lon"]; // retrieves longitude
             var name = data[0]["name"]; // retrieves name
-            console.log(name);
+            // console.log(name);
         
 
             var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts" + "&appid=" + apiKey + "&units=metric"; // to make one call API using co-ordinates retrieved earlier
@@ -59,51 +59,55 @@ function handleSearchFormSubmit(event) {
                     return response.json();
             })
             .then(function (data) {
-                console.log(data);
+                // console.log(data);
                 console.log("second api call above");
-                console.log(name);
+                // console.log(name);
                 var currentDay1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
-                     console.log(currentDay1);
-                var border = document.createElement("div")
+                    //  console.log(currentDay1);
+                var border = document.createElement("div") // for creating a box for the current weather
                 border.setAttribute("class", "border border-dark bg-info")
                 currentWeather.appendChild(border)
-                var unorderedList = document.createElement("ul")
+                var unorderedList = document.createElement("ul") // to get some elements inline using bootstrap
                 unorderedList.setAttribute("class", "list-inline")
                 border.appendChild(unorderedList)
-                     for (var i = 0; i < currentDay1.length; i++) { 
-                           if (currentDay1[i] === currentDay1[2]) {
+                     for (var i = 0; i < currentDay1.length; i++) { // for loop for generating data to put onto the page using data from variable currentDay1
+                           if (currentDay1[i] === currentDay1[2]) { // the weather icon
                                var listItem = document.createElement("li")
                                listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                var listItem = document.createElement("img")
                                listItem.setAttribute("src", "https://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
                             //    listItem.setAttribute("class", "list-inline-item")
-                               console.log(currentDay1[i])
+                            //    console.log(currentDay1[i])
                                // currentWeather.appendChild(listItem);
-                           } else if (currentDay1[i] === currentDay1[1]) {
+
+                           } else if (currentDay1[i] === currentDay1[1]) { // the date
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                             listItem.textContent = moment.unix(currentDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
-                            console.log(currentDay1[i])
+                            // console.log(currentDay1[i])
                                
-                           } else if (currentDay1[i] === currentDay1[3]) {
+                           } else if (currentDay1[i] === currentDay1[3]) { // the temperature
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Temp: " + currentDay1[i] + "°C";
-                            console.log(currentDay1[i])
-                           } else if (currentDay1[i] === currentDay1[4]) {
+                            // console.log(currentDay1[i])
+
+                           } else if (currentDay1[i] === currentDay1[4]) { // the humidity
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Humidity: " + currentDay1[i] + "%";
-                            console.log(currentDay1[i])
-                           } else if (currentDay1[i] === currentDay1[5]) {
+                            // console.log(currentDay1[i])
+
+                           } else if (currentDay1[i] === currentDay1[5]) { // the wind speed
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Wind: " + currentDay1[i] + "m/s";
-                            console.log(currentDay1[i])
-                           } else if (currentDay1[i] === currentDay1[6]) {
+                            // console.log(currentDay1[i])
+
+                           } else if (currentDay1[i] === currentDay1[6]) { // the UV index
                             var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
@@ -113,74 +117,77 @@ function handleSearchFormSubmit(event) {
                             listItem.append(span);
                             span.textContent = " " + currentDay1[i] + " ";
                             var uvRange = Number(currentDay1[6]);
-                            if (uvRange < 3) {
+                            if (uvRange < 3) { // low
                                 span.setAttribute("style", "background-color: green; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 3 && uvRange < 6) {
+                            } else if (uvRange >= 3 && uvRange < 6) { // moderate
                                 span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 6 && uvRange < 8) {
+                            } else if (uvRange >= 6 && uvRange < 8) { // high
                                 span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 8 && uvRange < 11) {
+                            } else if (uvRange >= 8 && uvRange < 11) { // very high
                                 span.setAttribute("style", "background-color: red; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 11) {
+                            } else if (uvRange >= 11) { // extreme
                                 span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
                             }
-                            console.log(currentDay1[i])
-                           } else {
+                            // console.log(currentDay1[i])
+                           } else { // the city name
                                var listItem = document.createElement("li");
                                listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                listItem.textContent = currentDay1[i];
-                               console.log(currentDay1[i])
+                            //    console.log(currentDay1[i])
                             }
                         if (currentDay1[i] === currentDay1[1] || currentDay1[i] === currentDay1[2] || currentDay1[i] === currentDay1[0]) {
-                            unorderedList.appendChild(listItem);
+                            unorderedList.appendChild(listItem); // appends to unordered list
                         } else {
-                            border.appendChild(listItem); // appends to current weather forecast
+                            border.appendChild(listItem); // appends to div to avoid being inline elements
                         }
                     } // for loop ends here
                 
-                var header2 = document.createElement("h2")
+                var header2 = document.createElement("h2") // five day forecast title
                 header2.setAttribute("class", "fs-2 fw-bold p-2")
                 header2.textContent = "5-Day Forecast: "
                 fiveDayForecast.appendChild(header2);
-
+                    
                 for (var j = 1; j < 6; j++) { // to loop through each day
                     var forecastDay1 = [data.daily[j]["dt"], data.daily[j]["weather"][0]["icon"], data.daily[j]["temp"]["day"], data.daily[j]["humidity"], data.daily[j]["wind_speed"]]; // only need date, weather icon, temperature, humidity, wind speed.
-                    console.log(forecastDay1);
-                    var border = document.createElement("div")
+                    // console.log(forecastDay1);
+                    var border = document.createElement("div") // borders for each day
                     border.setAttribute("class", "border border-light bg-dark")
                     fiveDayForecast.appendChild(border)
+                    // for loop for generating data to put onto the page using data from variable forecastDay1
                     for (var i = 0; i < forecastDay1.length; i++) { // nested for loop
-                        if (forecastDay1[i] === forecastDay1[1]) {
+                        if (forecastDay1[i] === forecastDay1[1]) { // the weather icon
                             var listItem = document.createElement("img")
 
                             listItem.setAttribute("src", "https://openweathermap.org/img/wn/" + forecastDay1[i] + "@2x.png")
-                            console.log(forecastDay1[i])
+                            // console.log(forecastDay1[i])
 
-                        } else if (forecastDay1[i] === forecastDay1[0]) {
+                        } else if (forecastDay1[i] === forecastDay1[0]) { // the date
                          var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 fw-bold text-light")
                          listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = moment.unix(forecastDay1[i]).format("D/MMM/YYYY") // parsing unix timestamp using moment.js
-                         console.log(forecastDay1[i])
+                        //  console.log(forecastDay1[i])
 
-                        } else if (forecastDay1[i] === forecastDay1[2]) {
+                        } else if (forecastDay1[i] === forecastDay1[2]) { // the temperature
                          var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
                          listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Temp: " + forecastDay1[i] + "°C";
-                         console.log(forecastDay1[i])
-                        } else if (forecastDay1[i] === forecastDay1[3]) {
+                        //  console.log(forecastDay1[i])
+
+                        } else if (forecastDay1[i] === forecastDay1[3]) { // the humidity
                          var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
                          listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Humidity: " + forecastDay1[i] + "%";
-                         console.log(forecastDay1[i])
-                        } else if (forecastDay1[i] === forecastDay1[4]) {
+                        //  console.log(forecastDay1[i])
+
+                        } else if (forecastDay1[i] === forecastDay1[4]) { // the wind speed
                          var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
                          listItem.setAttribute("style", "list-style: none")
                          listItem.textContent = "Wind: " + forecastDay1[i] + "m/s";
-                         console.log(forecastDay1[i])
+                        //  console.log(forecastDay1[i])
                         } 
 
                        border.appendChild(listItem); // for loop ends here
@@ -190,43 +197,43 @@ function handleSearchFormSubmit(event) {
         });
     }
 
-  function generateHistory() {
+  function generateHistory() { // when a city is searched, it generates a button and puts search history into local storage
     var historyButton = document.createElement("button");
     historyButton.setAttribute("class", "btn btn-secondary btn-lg px-5 mb-2");
     historyButton.textContent = cityInputEl.value;
   
-    if (!capture.includes(cityInputEl.value)) {
+    if (!capture.includes(cityInputEl.value)) { // checks to avoid making duplicate buttons of same city
       capture.push(cityInputEl.value);
-      localStorage.setItem("history", JSON.stringify(capture));
+      localStorage.setItem("history", JSON.stringify(capture)); // puts
       historyButton.addEventListener("click", function (event) {
-        cityInputEl.value = event.target.innerHTML;
+        cityInputEl.value = event.target.innerHTML; // ensures the correct city name is retrieved when a button is clicked
         handleSearchFormSubmit(event);
       });
     } else {
       return;
     }
   
-    searchAndHistory.appendChild(historyButton);
+    searchAndHistory.appendChild(historyButton); // appends button to the page of the searchAndHistory div
   }
 
-  function getHistory() {
-    capture = JSON.parse(localStorage.getItem("history")); //
-    for (var i = 0; i < capture.length; i++) {
+  function getHistory() { // to retrieve search history from local storage
+    capture = JSON.parse(localStorage.getItem("history")); // retrieves storage and puts it into global variable
+    for (var i = 0; i < capture.length; i++) { // for loop for generating past history buttons
       var historyButton = document.createElement("button");
       historyButton.setAttribute("class", "btn btn-secondary btn-lg px-5 mb-2")
       historyButton.setAttribute("data-search", i);
       historyButton.textContent = capture[i];
   
       historyButton.addEventListener("click", function (event) {
-        cityInputEl.value = event.target.innerHTML;
+        cityInputEl.value = event.target.innerHTML; // ensures the correct city name is retrieved when a button is clicked
         handleSearchFormSubmit(event);
       });
-      searchAndHistory.appendChild(historyButton);
+      searchAndHistory.appendChild(historyButton); // appends button to the page of the searchAndHistory div
     }
   }
 
-  searchFormEl.addEventListener('submit', handleSearchFormSubmit);
+  searchFormEl.addEventListener("submit", handleSearchFormSubmit);
 
-  if (take !== null) {
+  if (take !== null) { // to avoid bugs if no local storage used
       getHistory();
   }
