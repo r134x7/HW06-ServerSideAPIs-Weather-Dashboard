@@ -39,13 +39,13 @@ function handleSearchFormSubmit(event) {
 
     cityInputEl.textContent = ""; // clears text input
 
-    fetch(getCoordinates)
+    fetch(getCoordinates) // this is the first API call that gets the co-ordinates
         .then(function (response) {
           return response.json();
         })
         .then(function (data) {
-            console.log(data);
-            console.log("first api call above");
+            // console.log(data);
+            // console.log("first api call above");
             var lat = data[0]["lat"]; // retrieves latitude
             var lon = data[0]["lon"]; // retrieves longitude
             var name = data[0]["name"]; // retrieves name
@@ -54,13 +54,13 @@ function handleSearchFormSubmit(event) {
 
             var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts" + "&appid=" + apiKey + "&units=metric"; // to make one call API using co-ordinates retrieved earlier
 
-            fetch(queryURL) // making a second api call
+            fetch(queryURL) // this is the second API call that uses the co-ordinates retreived to use the One Call API because it requires co-ordinates, it doesn't let you search via city name.
                 .then(function (response) {
                     return response.json();
             })
             .then(function (data) {
                 // console.log(data);
-                console.log("second api call above");
+                // console.log("second api call above");
                 // console.log(name);
                 var currentDay1 = [name, data.current.dt, data.current.weather[0]["icon"], data.current.temp, data.current.humidity, data.current.wind_speed, data.current.uvi];
                     //  console.log(currentDay1);
@@ -70,9 +70,10 @@ function handleSearchFormSubmit(event) {
                 var unorderedList = document.createElement("ul") // to get some elements inline using bootstrap
                 unorderedList.setAttribute("class", "list-inline")
                 border.appendChild(unorderedList)
-                     for (var i = 0; i < currentDay1.length; i++) { // for loop for generating data to put onto the page using data from variable currentDay1
+                for (var i = 0; i < currentDay1.length; i++) { // for loop for generating data to put onto the page using data from variable currentDay1
+                    var listItem = document.createElement("li");
+
                            if (currentDay1[i] === currentDay1[2]) { // the weather icon
-                               var listItem = document.createElement("li")
                                listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                var listItem = document.createElement("img")
                                listItem.setAttribute("src", "https://openweathermap.org/img/wn/" + currentDay1[i] + "@2x.png")
@@ -81,34 +82,29 @@ function handleSearchFormSubmit(event) {
                                // currentWeather.appendChild(listItem);
 
                            } else if (currentDay1[i] === currentDay1[1]) { // the date
-                            var listItem = document.createElement("li");
                             listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                             listItem.textContent = moment.unix(currentDay1[i]).format("(D/MMM/YYYY)") // parsing unix timestamp using moment.js
                             // console.log(currentDay1[i])
                                
                            } else if (currentDay1[i] === currentDay1[3]) { // the temperature
-                            var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Temp: " + currentDay1[i] + "°C";
                             // console.log(currentDay1[i])
 
                            } else if (currentDay1[i] === currentDay1[4]) { // the humidity
-                            var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Humidity: " + currentDay1[i] + "%";
                             // console.log(currentDay1[i])
 
                            } else if (currentDay1[i] === currentDay1[5]) { // the wind speed
-                            var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             listItem.textContent = "Wind: " + currentDay1[i] + "m/s";
                             // console.log(currentDay1[i])
 
                            } else if (currentDay1[i] === currentDay1[6]) { // the UV index
-                            var listItem = document.createElement("li");
                             listItem.setAttribute("class", "lead p-2")
                             listItem.setAttribute("style", "list-style: none")
                             var span = document.createElement("span");
@@ -116,27 +112,27 @@ function handleSearchFormSubmit(event) {
                             listItem.textContent = "UV index: "
                             listItem.append(span);
                             span.textContent = " " + currentDay1[i] + " ";
-                            var uvRange = Number(currentDay1[6]);
-                            if (uvRange < 3) { // low
-                                span.setAttribute("style", "background-color: green; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 3 && uvRange < 6) { // moderate
-                                span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 6 && uvRange < 8) { // high
-                                span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 8 && uvRange < 11) { // very high
-                                span.setAttribute("style", "background-color: red; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            } else if (uvRange >= 11) { // extreme
-                                span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
-                            }
-                            // console.log(currentDay1[i])
+
+                            var uvRange = Number(currentDay1[6]); // the setAttributes below look repetitive but if I do two seperate styles for one thing then the new style overwrites the old one
+                                if (uvRange < 3) { // low
+                                    span.setAttribute("style", "background-color: green; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
+                                } else if (uvRange >= 3 && uvRange < 6) { // moderate
+                                    span.setAttribute("style", "background-color: yellow; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
+                                } else if (uvRange >= 6 && uvRange < 8) { // high
+                                    span.setAttribute("style", "background-color: orange; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
+                                } else if (uvRange >= 8 && uvRange < 11) { // very high
+                                    span.setAttribute("style", "background-color: red; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
+                                } else if (uvRange >= 11) { // extreme
+                                    span.setAttribute("style", "background-color: violet; font-weight: bold; padding: 7px 17px 7px 17px; border-radius: 8px; color: white;")
+                                }
+                                // console.log(currentDay1[i])
                            } else { // the city name
-                               var listItem = document.createElement("li");
                                listItem.setAttribute("class", "list-inline-item fw-bold lead p-2")
                                listItem.textContent = currentDay1[i];
                             //    console.log(currentDay1[i])
                             }
                         if (currentDay1[i] === currentDay1[1] || currentDay1[i] === currentDay1[2] || currentDay1[i] === currentDay1[0]) {
-                            unorderedList.appendChild(listItem); // appends to unordered list
+                            unorderedList.appendChild(listItem); // appends to unordered list for inline elements
                         } else {
                             border.appendChild(listItem); // appends to div to avoid being inline elements
                         }
@@ -155,6 +151,9 @@ function handleSearchFormSubmit(event) {
                     fiveDayForecast.appendChild(border)
                     // for loop for generating data to put onto the page using data from variable forecastDay1
                     for (var i = 0; i < forecastDay1.length; i++) { // nested for loop
+                        var listItem = document.createElement("li");
+                        listItem.setAttribute("style", "list-style: none")
+
                         if (forecastDay1[i] === forecastDay1[1]) { // the weather icon
                             var listItem = document.createElement("img")
 
@@ -162,35 +161,31 @@ function handleSearchFormSubmit(event) {
                             // console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[0]) { // the date
-                         var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 fw-bold text-light")
-                         listItem.setAttribute("style", "list-style: none")
+                         
                          listItem.textContent = moment.unix(forecastDay1[i]).format("D/MMM/YYYY") // parsing unix timestamp using moment.js
                         //  console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[2]) { // the temperature
-                         var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
-                         listItem.setAttribute("style", "list-style: none")
+
                          listItem.textContent = "Temp: " + forecastDay1[i] + "°C";
                         //  console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[3]) { // the humidity
-                         var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
-                         listItem.setAttribute("style", "list-style: none")
+                         
                          listItem.textContent = "Humidity: " + forecastDay1[i] + "%";
                         //  console.log(forecastDay1[i])
 
                         } else if (forecastDay1[i] === forecastDay1[4]) { // the wind speed
-                         var listItem = document.createElement("li");
                          listItem.setAttribute("class", "fs-4 p-2 text-light")
-                         listItem.setAttribute("style", "list-style: none")
+                         
                          listItem.textContent = "Wind: " + forecastDay1[i] + "m/s";
                         //  console.log(forecastDay1[i])
                         } 
 
-                       border.appendChild(listItem); // for loop ends here
+                       border.appendChild(listItem); // appends to div made, for loop ends here
                     }
                 }
             });
